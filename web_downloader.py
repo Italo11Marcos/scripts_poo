@@ -11,7 +11,7 @@ from pathlib import Path
 
 class WebDownloader():
 
-    def __init__(self, url, destino, filename=None, timeout=10, retries=3, backoff_factor=0.3):
+    def __init__(self, url, destino, filename=None, timeout=10, retries=3, backoff_factor=0.3, verify_ssl=True):
         self.url = url
         self.destino = destino
         self.filename = filename
@@ -22,6 +22,7 @@ class WebDownloader():
         self.response = None
         self.tamanho_total = None
         self.chunksize = None
+        self.verify_ssl = verify_ssl
 
     def _escolher_chunksize(self):
         if self.tamanho_total is None:
@@ -60,7 +61,7 @@ class WebDownloader():
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
             }
-            self.response = self.session.get(self.url, headers=headers, stream=True, timeout=self.timeout)
+            self.response = self.session.get(self.url, headers=headers, stream=True, timeout=self.timeout, verify=self.verify_ssl)
             self.response.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"Erro ao baixar o arquivo: {e}")
